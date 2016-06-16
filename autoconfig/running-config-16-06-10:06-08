@@ -1,0 +1,267 @@
+
+!Command: show running-config
+!Time: Thu Jun  9 18:08:59 2016
+
+version 7.0(3)I4(1)
+hostname nexus1-leaf-pm
+install feature-set fcoe-npv
+vdc nexus1-leaf-pm id 1
+  allow feature-set fcoe-npv
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 511
+  limit-resource u4route-mem minimum 248 maximum 248
+  limit-resource u6route-mem minimum 96 maximum 96
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+feature-set fcoe-npv
+
+feature telnet
+feature nxapi
+feature bash-shell
+nv overlay evpn
+feature ospf
+feature bgp
+feature interface-vlan
+feature vn-segment-vlan-based
+feature lldp
+feature itd
+feature sflow
+feature nv overlay
+
+username admin password 5 $5$GeP3lA8j$5r9uetDtFM77CEBSEp4AE0fp6y.wCsmTHR4axG3BxW0  role network-admin
+username admin shelltype bash
+ip domain-lookup
+ip domain-name (null)
+ip host ins-sw-bld40 171.70.163.224
+copp profile strict
+configure maintenance profile maintenance-mode
+  router bgp 200
+    isolate
+configure terminal
+snmp-server user admin network-admin auth md5 0xa721054cef7d4b5d26e35a0289b27736 priv 0xa721054cef7d4b5d26e35a0289b27736 localizedkey
+snmp-server host 10.24.80.195 traps version 2c public udp-port 1163
+snmp-server host 171.71.55.34 traps version 2c public udp-port 1166
+snmp-server host 171.71.55.62 traps version 2c public udp-port 2162
+snmp-server host 172.23.233.0 traps version 2c public udp-port 2162
+rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
+rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
+rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
+rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
+rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
+
+vlan 1,5,10,1000,2000-2001,2005,2009
+vlan 10
+  vn-segment 10000
+vlan 2000
+  name tenanta
+vlan 2001
+  name shne
+
+vrf context management
+  ip domain-name (null)
+  ip name-server 171.70.168.183
+  ip route 0.0.0.0/0 172.31.216.1
+vrf context red
+vrf context test
+system nve ipmc global index-size 2500
+vlan configuration 10
+  no ip igmp snooping
+
+
+interface Vlan1
+
+interface Vlan200
+  no shutdown
+  ip address 10.10.10.9/24
+
+interface Ethernet1/1
+  description MDT test: FARTY trunk port
+  no snmp trap link-status
+  logging event port trunk-status
+
+interface Ethernet1/2
+  no switchport
+  no shutdown
+
+interface Ethernet1/3
+
+interface Ethernet1/4
+
+interface Ethernet1/5
+
+interface Ethernet1/6
+
+interface Ethernet1/7
+  switchport mode dot1q-tunnel
+  switchport access vlan 10
+  spanning-tree port type edge
+  spanning-tree bpdufilter enable
+  l2protocol tunnel stp
+
+interface Ethernet1/8
+
+interface Ethernet1/9
+
+interface Ethernet1/10
+
+interface Ethernet1/11
+
+interface Ethernet1/12
+
+interface Ethernet1/13
+
+interface Ethernet1/14
+
+interface Ethernet1/15
+
+interface Ethernet1/16
+
+interface Ethernet1/17
+
+interface Ethernet1/18
+
+interface Ethernet1/19
+
+interface Ethernet1/20
+  switchport mode trunk
+
+interface Ethernet1/21
+
+interface Ethernet1/22
+
+interface Ethernet1/23
+
+interface Ethernet1/24
+
+interface Ethernet1/25
+
+interface Ethernet1/26
+
+interface Ethernet1/27
+
+interface Ethernet1/28
+
+interface Ethernet1/29
+
+interface Ethernet1/30
+
+interface Ethernet1/31
+
+interface Ethernet1/32
+  no switchport
+  no shutdown
+
+interface Ethernet1/33
+  no switchport
+  no snmp trap link-status
+  logging event port trunk-status
+  storm-control multicast level 92.00
+  storm-control unicast level 92.00
+  ip address 192.168.0.10/24
+
+interface Ethernet1/34
+
+interface Ethernet1/35
+
+interface Ethernet1/36
+
+interface Ethernet1/37
+
+interface Ethernet1/38
+
+interface Ethernet1/39
+
+interface Ethernet1/40
+
+interface Ethernet1/41
+
+interface Ethernet1/42
+
+interface Ethernet1/43
+
+interface Ethernet1/44
+
+interface Ethernet1/45
+
+interface Ethernet1/46
+
+interface Ethernet1/47
+
+interface Ethernet1/48
+
+interface Ethernet2/1
+  no switchport
+  no shutdown
+
+interface Ethernet2/2
+  shutdown
+
+interface Ethernet2/3
+
+interface Ethernet2/4
+  no switchport
+  vrf member red
+  ip address 192.168.1.2/24
+
+interface Ethernet2/5
+  no switchport
+  no shutdown
+
+interface Ethernet2/6
+  no switchport
+  no shutdown
+
+interface Ethernet2/7
+
+interface Ethernet2/8
+
+interface Ethernet2/9
+
+interface Ethernet2/10
+
+interface Ethernet2/11
+  no switchport
+  no shutdown
+
+interface Ethernet2/12
+
+interface mgmt0
+  vrf member management
+  ip address 172.31.216.249/22
+
+interface loopback0
+  description New Loopback
+  ip address 1.1.1.1/32
+line console
+line vty
+boot nxos bootflash:/nxos.7.0.3.I4.1.bin 
+router ospf 991
+router ospf 992
+router ospf 993
+router ospf 994
+router ospf 995
+router ospf 996
+router ospf 999
+router bgp 10
+  router-id 1.1.1.1
+  address-family ipv4 unicast
+    network 1.1.1.1/32
+    network 10.10.10.0/24
+  neighbor 10.10.10.2
+    remote-as 200
+    address-family ipv4 unicast
+event manager applet gitpush
+  event cli match "copy running-config startup-config"
+  action 1 syslog priority emergencies msg savingconfig
+  action 2 cli copy running bootflash:/autoconfig/running.latest
+  action 3 cli guestshell run /home/scorban/autoconfig/autoconfig.py
+  action 3.5 syslog priority emergencies msg savedconfig
+  action 4 event-default
+monitor session 1 
+  source vlan 1 rx
+
+itd device-group shane
+
+
+
